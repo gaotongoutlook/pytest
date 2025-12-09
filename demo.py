@@ -943,6 +943,201 @@ def say_hello():
 
 say_hello()
 
+# 类装饰器（Class Decorator）是一种用于动态修改类行为的装饰器，它接收一个类作为参数，并返回一个新的类或修改后的类
+# 类装饰器可以用于：
+#   添加/修改类的方法或属性
+#   拦截实例化过程
+#   实现单例模式、日志记录、权限检查等功能
+# 类装饰器有两种常见形式：
+#   函数形式的类装饰器（接收类作为参数，返回新类）
+#   类形式的类装饰器（实现 __call__ 方法，使其可调用）
+
+# 类装饰器
+def log_class(cls):
+    """类装饰器，在调用方法前后打印日志"""
+    class Wrapper:
+        def __init__(self, *args, **kwargs):
+            self.wrapped = cls(*args, **kwargs)  # 实例化原始类
+        def __getattr__(self, name):
+            """拦截未定义的属性访问，转发给原始类"""
+            return getattr(self.wrapped, name)
+        def display(self):
+            print(f"调用 {cls.__name__}.display() 前")
+            self.wrapped.display()
+            print(f"调用 {cls.__name__}.display() 后")
+    return Wrapper  # 返回包装后的类
+
+@log_class
+class MyClass:
+    def display(self):
+        print("这是 MyClass 的 display 方法")
+
+obj = MyClass()
+obj.display()
+
+# 类形式的类装饰器（实现 __call__ 方法） 单例模式
+class SingletonDecorator:
+    """类装饰器，使目标类变成单例模式"""
+    def __init__(self, cls):
+        self.cls = cls
+        self.instance = None
+    def __call__(self, *args, **kwargs):
+        """拦截实例化过程，确保只创建一个实例"""
+        if self.instance is None:
+            self.instance = self.cls(*args, **kwargs)
+        return self.instance
+
+@SingletonDecorator
+class Database:
+    def __init__(self):
+        print("Database 初始化")
+
+db1 = Database()
+db2 = Database()
+print(db1 is db2)  # True，说明是同一个实例
+
+# 内置装饰器
+#   @staticmethod: 将方法定义为静态方法，不需要实例化类即可调用
+#   @classmethod: 将方法定义为类方法，第一个参数是类本身（通常命名为 cls）
+#   @property: 将方法转换为属性，使其可以像属性一样访问
+class MyClass:
+    @staticmethod
+    def static_method():
+        print("This is a static method.")
+    @classmethod
+    def class_method(cls):
+        print(f"This is a class method of {cls.__name__}.")
+    @property
+    def name(self):
+        return self._name
+    @name.setter
+    def name(self, value):
+        self._name = value
+# 使用
+MyClass.static_method()
+MyClass.class_method()
+obj = MyClass()
+obj.name = "Alice"
+print(obj.name)
+
+# 多个装饰器的堆叠
+#   你可以将多个装饰器堆叠在一起，它们会按照从下到上的顺序依次应用
+def decorator1(func):
+    def wrapper():
+        print("Decorator 1")
+        func()
+    return wrapper
+def decorator2(func):
+    def wrapper():
+        print("Decorator 2")
+        func()
+    return wrapper
+@decorator1
+@decorator2
+def say_hello():
+    print("Hello!")
+say_hello()
+
+
+# 数据结构实现栈 栈的数据结构 使用列表实现栈
+class Stack:
+    def __init__(self):
+        self.stack = []
+    def push(self, item):
+        self.stack.append(item)
+    def pop(self):
+        if not self.is_empty():
+            return self.stack.pop()
+        else:
+            raise IndexError("pop from empty stack")
+    def peek(self):
+        if not self.is_empty():
+            return self.stack[-1]
+        else:
+            raise IndexError("peek from empty stack")
+    def is_empty(self):
+        return len(self.stack) == 0
+    def size(self):
+        return len(self.stack)
+
+# 使用示例
+stack = Stack()
+stack.push(1)
+stack.push(2)
+stack.push(3)
+print("栈顶元素:", stack.peek())  # 输出: 栈顶元素: 3
+print("栈大小:", stack.size())    # 输出: 栈大小: 3
+print("弹出元素:", stack.pop())  # 输出: 弹出元素: 3
+print("栈是否为空:", stack.is_empty())  # 输出: 栈是否为空: False
+print("栈大小:", stack.size())    # 输出: 栈大小: 2
+
+
+# 使用列表实现队列
+class Queue:
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, item):
+        self.queue.append(item)
+    def dequeue(self):
+        if not self.is_empty():
+            return self.queue.pop(0)
+        else:
+            raise IndexError("dequeue from empty queue")
+    def peek(self):
+        if not self.is_empty():
+            return self.queue[0]
+        else:
+            raise IndexError("peek from empty queue")
+    def is_empty(self):
+        return len(self.queue) == 0
+    def size(self):
+        return len(self.queue)
+
+# 使用示例
+queue = Queue()
+queue.enqueue('a')
+queue.enqueue('b')
+queue.enqueue('c')
+print("队首元素:", queue.peek())    # 输出: 队首元素: a
+print("队列大小:", queue.size())    # 输出: 队列大小: 3
+print("移除的元素:", queue.dequeue())  # 输出: 移除的元素: a
+print("队列是否为空:", queue.is_empty())  # 输出: 队列是否为空: False
+print("队列大小:", queue.size())    # 输出: 队列大小: 2
+
+# 模块 模块的作用
+#   代码复用：将常用的功能封装到模块中，可以在多个程序中重复使用
+#   命名空间管理：模块可以避免命名冲突，不同模块中的同名函数或变量不会互相干扰
+#   代码组织：将代码按功能划分到不同的模块中，使程序结构更清晰
+import sys
+print('命令行参数如下:')
+for i in sys.argv:
+    print(i)
+print('\n\nPython 路径为：', sys.path, '\n')
+
+# import 语句
+# 导入模块
+# import support
+
+# 给模块起别名
+import numpy as np  # 将 numpy 模块别名设置为 np
+from math import sqrt as square_root  # 将 sqrt 函数别名设置为 square_root
+
+# 模块名称
+if __name__ == '__main__':
+   print('程序自身在运行')
+else:
+   print('我来自另一模块')
+# 说明：每个模块都有一个 __name__ 属性
+#   如果模块是被直接运行，__name__ 的值为 __main__
+#   如果模块是被导入的，__name__ 的值为模块名
+#   说明：__name__ 与 __main__ 底下是双下划线， _ _ 是这样去掉中间的那个空格
+
+
+
+
+
+
+
 
 
 
