@@ -1119,8 +1119,8 @@ print('\n\nPython 路径为：', sys.path, '\n')
 # import support
 
 # 给模块起别名
-import numpy as np  # 将 numpy 模块别名设置为 np
-from math import sqrt as square_root  # 将 sqrt 函数别名设置为 square_root
+# import numpy as np  # 将 numpy 模块别名设置为 np
+# from math import sqrt as square_root  # 将 sqrt 函数别名设置为 square_root
 
 # 模块名称
 if __name__ == '__main__':
@@ -1131,6 +1131,23 @@ else:
 #   如果模块是被直接运行，__name__ 的值为 __main__
 #   如果模块是被导入的，__name__ 的值为模块名
 #   说明：__name__ 与 __main__ 底下是双下划线， _ _ 是这样去掉中间的那个空格
+
+# Python3 输入和输出
+#   str()： 函数返回一个用户易读的表达形式
+#   repr()： 产生一个解释器易读的表达形式
+
+# 操作文件
+# 打开一个文件
+f = open("/tmp/foo.txt", "w")
+f.write( "Python 是一个非常好的语言。\n是的，的确非常好!!\n" )
+# 关闭打开的文件
+f.close()
+
+
+
+
+
+
 
 
 
